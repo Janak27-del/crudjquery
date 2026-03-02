@@ -6,12 +6,14 @@ function createSingleItem(item) {
     <p style="text-decoration: ${item.completed ? "line-through" : "none"}">
       ${item.name}
     </p>
-    <button class="btn icon-btn edit-btn" type="button">
-      <i class="fa-regular fa-pen-to-square"></i>
-    </button>
-    <button class="btn icon-btn remove-btn" type="button">
-      <i class="fa-regular fa-trash-can"></i>
-    </button>
+    <div class="btn-container">
+      <button class="btn icon-btn edit-btn" type="button">
+        <i class="fa-solid fa-pen-to-square"></i>
+      </button>
+      <button class="btn icon-btn remove-btn" type="button">
+        <i class="fa-solid fa-trash-can"></i>
+      </button>
+    </div>
   `);
 
     $div.find('input[type="checkbox"]').on("change", function () {

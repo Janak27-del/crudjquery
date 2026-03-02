@@ -1,60 +1,106 @@
+// STATE
+var items = getLocalStorage().length > 0 ? getLocalStorage() : (typeof groceryItems !== 'undefined' ? groceryItems : []);
+var editId = "";
+
+// LOCAL STORAGE
 function getLocalStorage() {
-    var list = localStorage.getItem("grocery-list");
-    if (list) {
-        return JSON.parse(list);
-    }
-    return [];
+    return localStorage.getItem("grocery-list")
+        ? JSON.parse(localStorage.getItem("grocery-list"))
+        : [];
 }
 
 function setLocalStorage(itemsArray) {
     localStorage.setItem("grocery-list", JSON.stringify(itemsArray));
 }
 
-function removeItemFromLocalStorage(id) {
-    var list = getLocalStorage();
-    list = list.filter(function (item) {
-        return item.id !== id;
-    });
-    setLocalStorage(list);
+// RENDER
+function render() {
+    var $app = $("#app");
+    $app.empty();
+
+    var itemToEdit = items.find(function (item) { return item.id === editId; });
+    var $form = createForm(editId, itemToEdit);
+    var $itemList = createItems(items);
+
+    $app.append($form);
+    $app.append($itemList);
 }
 
-function updateItemInLocalStorage(id, updatedItem) {
-    var list = getLocalStorage();
-    list = list.map(function (item) {
-        if (item.id === id) {
-            return updatedItem;
-        }
-        return item;
-    });
-    setLocalStorage(list);
-}
-
-
-function removeItem(itemId) {
-    items = $.grep(items, function (item) {
-        return item.id !== itemId;
-    });
-    setLocalStorage(items);
-    render();
-    setTimeout(function () {
-        alert("Item Deleted Successfully!");
-    }, 0);
-}
-
-function generateId() {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-}
-
+// OPERATIONS
 function addItem(itemName) {
     var newItem = {
         name: itemName,
         completed: false,
-        id: generateId(),
+        id: new Date().getTime().toString(),
     };
     items.push(newItem);
     setLocalStorage(items);
     render();
-    setTimeout(function () {
-        alert("Item Added Successfully!");
-    }, 0);
+    displayAlert("item added to the list", "success");
 }
+
+function removeItem(id) {
+    items = items.filter(function (item) {
+        return item.id !== id;
+    });
+    setLocalStorage(items);
+    render();
+    displayAlert("item removed", "danger");
+    if (items.length === 0) {
+        editId = "";
+    }
+}
+
+function setEditId(id) {
+    editId = id;
+    render();
+}
+
+function updateItemName(name) {
+    items = items.map(function (item) {
+        if (item.id === editId) {
+            item.name = name;
+        }
+        return item;
+    });
+    setLocalStorage(items);
+    editId = "";
+    render();
+    displayAlert("value changed", "success");
+}
+
+function editCompleted(id) {
+    items = items.map(function (item) {
+        if (item.id === id) {
+            item.completed = !item.completed;
+        }
+        return item;
+    });
+    setLocalStorage(items);
+    render();
+}
+
+function clearItems() {
+    items = [];
+    setLocalStorage(items);
+    editId = "";
+    render();
+    displayAlert("empty list", "danger");
+}
+
+// ALERT
+function displayAlert(text, action) {
+    var $alert = $(".alert-container");
+    $alert.text(text);
+    $alert.addClass(`alert-${action}`);
+
+    setTimeout(function () {
+        $alert.text("");
+        $alert.removeClass(`alert-${action}`);
+    }, 1500);
+}
+
+// INIT
+$(document).ready(function () {
+    render();
+});
