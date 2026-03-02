@@ -3,7 +3,7 @@ function createSingleItem(item) {
 
     $div.html(`
     <input type="checkbox" ${item.completed ? "checked" : ""} />
-    <p style="text-decoration: ${item.completed ? "line-through" : "none"}">
+    <p class="${item.completed ? "completed-text" : ""}">
       ${item.name}
     </p>
     <div class="btn-container">

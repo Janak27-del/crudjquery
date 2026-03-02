@@ -24,6 +24,24 @@ function render() {
 
     $app.append($form);
     $app.append($itemList);
+
+    updateProgress();
+}
+
+// PROGRESS
+function updateProgress() {
+    var $container = $(".progress-container");
+    var $bar = $(".progress-bar");
+
+    if (items.length === 0) {
+        $container.hide();
+        return;
+    }
+
+    $container.show();
+    var completed = items.filter(function (item) { return item.completed; }).length;
+    var percentage = (completed / items.length) * 100;
+    $bar.css("width", percentage + "%");
 }
 
 // OPERATIONS
@@ -92,11 +110,14 @@ function clearItems() {
 function displayAlert(text, action) {
     var $alert = $(".alert-container");
     $alert.text(text);
-    $alert.addClass(`alert-${action}`);
+    $alert.addClass(`alert-${action} alert-show`);
 
     setTimeout(function () {
-        $alert.text("");
-        $alert.removeClass(`alert-${action}`);
+        $alert.removeClass("alert-show");
+        setTimeout(function () {
+            $alert.text("");
+            $alert.removeClass(`alert-${action}`);
+        }, 400);
     }, 1500);
 }
 
