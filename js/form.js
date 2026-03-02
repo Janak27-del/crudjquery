@@ -14,3 +14,25 @@ function createForm(editId, itemToEdit) {
       </button>
     </div>
   `);
+    return $form;
+}
+
+$form.on("submit", function (e) {
+    e.preventDefault();
+    var $input = $form.find(".form-input");
+    var value = $.trim($input.val());
+
+    if (!value) {
+        alert("Please provide value");
+        return;
+    }
+    if (editId) {
+        updateItemName(value);
+    } else {
+        addItem(value);
+    }
+
+    $input.val("");
+});
+
+return $form;
